@@ -440,6 +440,12 @@ class SwerveDrivePainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeCap = StrokeCap.round;
 
+    Paint encoderPaint = Paint()
+      ..strokeWidth = 3.5 * scaleFactor
+      ..color = const Color.fromARGB(255, 92, 244, 54)
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round;
+
     // Front left angle indicator thing
     Rect frontLeftWheel = Rect.fromCenter(
       center: Offset(circleRadius, circleRadius) + offset,
@@ -453,6 +459,13 @@ class SwerveDrivePainter extends CustomPainter {
       radians(45),
       false,
       anglePaint,
+    );
+    canvas.drawArc(
+      frontLeftWheel,
+      -(frontLeftEncoder + radians(22.5)) - pi / 2,
+      radians(45),
+      false,
+      encoderPaint,
     );
 
     // Front right angle indicator thing
@@ -469,6 +482,13 @@ class SwerveDrivePainter extends CustomPainter {
       false,
       anglePaint,
     );
+    canvas.drawArc(
+      frontRightWheel,
+      -(frontRightEncoder + radians(22.5)) - pi / 2,
+      radians(45),
+      false,
+      encoderPaint,
+    );
     // Back left angle indicator thing
     Rect backLeftWheel = Rect.fromCenter(
       center: Offset(circleRadius, size.height - circleRadius) + offset,
@@ -482,6 +502,13 @@ class SwerveDrivePainter extends CustomPainter {
       radians(45),
       false,
       anglePaint,
+    );
+    canvas.drawArc(
+      backLeftWheel,
+      -(backLeftEncoder + radians(22.5)) - pi / 2,
+      radians(45),
+      false,
+      encoderPaint,
     );
 
     // Back right angle indicator thing
@@ -499,6 +526,14 @@ class SwerveDrivePainter extends CustomPainter {
       radians(45),
       false,
       anglePaint,
+    );
+
+    canvas.drawArc(
+      backRightWheel,
+      -(backRightEncoder + radians(22.5)) - pi / 2,
+      radians(45),
+      false,
+      encoderPaint,
     );
   }
 
