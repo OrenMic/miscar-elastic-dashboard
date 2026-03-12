@@ -92,10 +92,10 @@ BEGIN
             VALUE "CompanyName", "com.gold872" "\0"
             VALUE "FileDescription", "elastic" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "elastic_dashboard" "\0"
+            VALUE "InternalName", "mislastic" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2023 Gold872. All rights reserved." "\0"
-            VALUE "OriginalFilename", "elastic_dashboard.exe" "\0"
-            VALUE "ProductName", "elastic_dashboard" "\0"
+            VALUE "OriginalFilename", "mislastic.exe" "\0"
+            VALUE "ProductName", "mislastic" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

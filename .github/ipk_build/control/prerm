@@ -1,5 +1,5 @@
 #!/bin/sh
-PACKAGE_NAME="elastic_dashboard"
+PACKAGE_NAME="mislastic"
 
 echo "Stopping $PACKAGE_NAME service..."
 

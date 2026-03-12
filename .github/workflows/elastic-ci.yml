@@ -162,12 +162,12 @@ jobs:
       - name: Zip MacOS Release
         if: ${{ matrix.platform == 'macos' && matrix.wpilib == false }}
         working-directory: ${{ matrix.build-path }}
-        run: zip -r ${{ github.workspace }}/${{ matrix.artifact-file }} elastic_dashboard.app --symlinks
+        run: zip -r ${{ github.workspace }}/${{ matrix.artifact-file }} mislastic.app --symlinks
 
       - name: Zip MacOS Release (WPILib)
         if: ${{ matrix.platform == 'macos' && matrix.wpilib }}
         working-directory: ${{ matrix.build-path }}
-        run: tar -zcvf ${{ github.workspace }}/${{ matrix.artifact-file }} elastic_dashboard.app
+        run: tar -zcvf ${{ github.workspace }}/${{ matrix.artifact-file }} mislastic.app
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -181,7 +181,7 @@ jobs:
         uses: L-Super/create-dmg-actions@v1.0.3
         with:
           dmg_name: ${{ matrix.build-path }}/elastic-setup-macos
-          src_dir: ${{ matrix.build-path }}/elastic_dashboard.app
+          src_dir: ${{ matrix.build-path }}/mislastic.app
 
       - name: Upload macOS installer
         if: ${{ matrix.platform == 'macos' && matrix.wpilib == false }}
@@ -245,13 +245,13 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Elastic-SystemCore
-          path: .github/ipk_build/elastic_dashboard_*.ipk
+          path: .github/ipk_build/mislastic_*.ipk
           if-no-files-found: error
 
   github-pages:
     name: "Upload to GitHub Pages"
     runs-on: ubuntu-22.04
-    if: ${{ github.repository == 'Gold872/elastic_dashboard' && github.ref == 'refs/heads/main' }}
+    if: ${{ github.repository == 'Gold872/mislastic' && github.ref == 'refs/heads/main' }}
     needs: [build-web]
     steps:
       - name: Download Web Build
@@ -291,7 +291,7 @@ jobs:
         run: |
           ls -al
           mv Elastic-Windows.zip Elastic-Windows_portable.zip
-          mv elastic_dashboard_*.ipk Elastic-SystemCore.ipk
+          mv mislastic_*.ipk Elastic-SystemCore.ipk
 
       - name: Get Draft Release Info
         id: release_info
