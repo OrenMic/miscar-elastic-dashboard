@@ -11,6 +11,7 @@ import 'package:elastic_dashboard/services/settings.dart';
 import 'package:elastic_dashboard/widgets/draggable_containers/draggable_widget_container.dart';
 import 'package:elastic_dashboard/widgets/nt_widgets/multi_topic/accelerometer.dart';
 import 'package:elastic_dashboard/widgets/nt_widgets/multi_topic/basic_swerve_drive.dart';
+import 'package:elastic_dashboard/widgets/nt_widgets/multi_topic/encoderd_swerve_drive.dart';
 import 'package:elastic_dashboard/widgets/nt_widgets/multi_topic/camera_stream.dart';
 import 'package:elastic_dashboard/widgets/nt_widgets/multi_topic/combo_box_chooser.dart';
 import 'package:elastic_dashboard/widgets/nt_widgets/multi_topic/command_scheduler.dart';
@@ -179,6 +180,17 @@ class NTWidgetRegistry {
       model: BasicSwerveModel.new,
       widget: SwerveDriveWidget.new,
       fromJson: BasicSwerveModel.fromJson,
+      minWidth: _normalSize * 2,
+      minHeight: _normalSize * 2,
+      defaultWidth: 2,
+      defaultHeight: 2,
+    );
+
+    registerMultiTopic(
+      name: EncoderdSwerveDriveWidget.widgetType,
+      model: EncoderdSwerveModel.new,
+      widget: EncoderdSwerveDriveWidget.new,
+      fromJson: EncoderdSwerveModel.fromJson,
       minWidth: _normalSize * 2,
       minHeight: _normalSize * 2,
       defaultWidth: 2,

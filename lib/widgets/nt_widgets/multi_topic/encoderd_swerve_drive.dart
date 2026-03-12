@@ -10,49 +10,49 @@ import 'package:elastic_dashboard/services/nt4_client.dart';
 import 'package:elastic_dashboard/widgets/dialog_widgets/dialog_toggle_switch.dart';
 import 'package:elastic_dashboard/widgets/nt_widgets/nt_widget.dart';
 
-class BasicSwerveModel extends MultiTopicNTWidgetModel {
+class EncoderdSwerveModel extends MultiTopicNTWidgetModel {
   @override
-  String type = SwerveDriveWidget.widgetType;
+  String type = EncoderdSwerveDriveWidget.widgetType;
 
   String get frontLeftAngleTopic => '$topic/Module 0/Rotation';
 
-  String get frontLeftVelocityTopic => '$topic/Module 0/Velocity';
+  String get frontLeftEncoderAngleTopic => '$topic/Module 0/Encoder';
 
   String get frontRightAngleTopic => '$topic/Module 1/Rotation';
 
-  String get frontRightVelocityTopic => '$topic/Module 1/Velocity';
+  String get frontRightEncoderAngleTopic => '$topic/Module 1/Encoder';
 
   String get backLeftAngleTopic => '$topic/Module 2/Rotation';
 
-  String get backLeftVelocityTopic => '$topic/Module 2/Velocity';
+  String get backLeftEncoderAngleTopic => '$topic/Module 2/Encoder';
 
   String get backRightAngleTopic => '$topic/Module 3/Rotation';
 
-  String get backRightVelocityTopic => '$topic/Module 3/Velocity';
+  String get backRightEncoderAngleTopic => '$topic/Module 3/Encoder';
 
   String get robotAngleTopic => '$topic/Robot Angle';
 
   late NT4Subscription frontLeftAngleSubscription;
-  late NT4Subscription frontLeftVelocitySubscription;
+  late NT4Subscription frontLeftEncoderSubscription;
   late NT4Subscription frontRightAngleSubscription;
-  late NT4Subscription frontRightVelocitySubscription;
+  late NT4Subscription frontRightEncoderSubscription;
   late NT4Subscription backLeftAngleSubscription;
-  late NT4Subscription backLeftVelocitySubscription;
+  late NT4Subscription backLeftEncoderSubscription;
   late NT4Subscription backRightAngleSubscription;
-  late NT4Subscription backRightVelocitySubscription;
+  late NT4Subscription backRightEncoderSubscription;
 
   late NT4Subscription robotAngleSubscription;
 
   @override
   List<NT4Subscription> get subscriptions => [
     frontLeftAngleSubscription,
-    frontLeftVelocitySubscription,
+    frontLeftEncoderSubscription,
     frontRightAngleSubscription,
-    frontRightVelocitySubscription,
+    frontRightEncoderSubscription,
     backLeftAngleSubscription,
-    backLeftVelocitySubscription,
+    backLeftEncoderSubscription,
     backRightAngleSubscription,
-    backRightVelocitySubscription,
+    backRightEncoderSubscription,
     robotAngleSubscription,
   ];
 
@@ -60,7 +60,7 @@ class BasicSwerveModel extends MultiTopicNTWidgetModel {
 
   String _rotationUnit = 'Radians';
 
-  BasicSwerveModel({
+  EncoderdSwerveModel({
     required super.ntConnection,
     required super.preferences,
     required super.topic,
@@ -71,7 +71,7 @@ class BasicSwerveModel extends MultiTopicNTWidgetModel {
        _showRobotRotation = showRobotRotation,
        super();
 
-  BasicSwerveModel.fromJson({
+  EncoderdSwerveModel.fromJson({
     required super.ntConnection,
     required super.preferences,
     required Map<String, dynamic> jsonData,
@@ -92,32 +92,32 @@ class BasicSwerveModel extends MultiTopicNTWidgetModel {
       frontLeftAngleTopic,
       super.period,
     );
-    frontLeftVelocitySubscription = ntConnection.subscribe(
-      frontLeftVelocityTopic,
+    frontLeftEncoderSubscription = ntConnection.subscribe(
+      frontLeftEncoderAngleTopic,
       super.period,
     );
     frontRightAngleSubscription = ntConnection.subscribe(
       frontRightAngleTopic,
       super.period,
     );
-    frontRightVelocitySubscription = ntConnection.subscribe(
-      frontRightVelocityTopic,
+    frontRightEncoderSubscription = ntConnection.subscribe(
+      frontRightEncoderAngleTopic,
       super.period,
     );
     backLeftAngleSubscription = ntConnection.subscribe(
       backLeftAngleTopic,
       super.period,
     );
-    backLeftVelocitySubscription = ntConnection.subscribe(
-      backLeftVelocityTopic,
+    backLeftEncoderSubscription = ntConnection.subscribe(
+      backLeftEncoderAngleTopic,
       super.period,
     );
     backRightAngleSubscription = ntConnection.subscribe(
       backRightAngleTopic,
       super.period,
     );
-    backRightVelocitySubscription = ntConnection.subscribe(
-      backRightVelocityTopic,
+    backRightEncoderSubscription = ntConnection.subscribe(
+      backRightEncoderAngleTopic,
       super.period,
     );
 
@@ -205,37 +205,41 @@ class BasicSwerveModel extends MultiTopicNTWidgetModel {
   }
 }
 
-class SwerveDriveWidget extends NTWidget {
-  static const String widgetType = 'SwerveDrive';
+class EncoderdSwerveDriveWidget extends NTWidget {
+  static const String widgetType = 'EncoderdSwerveDrive';
 
-  const SwerveDriveWidget({super.key}) : super();
+  const EncoderdSwerveDriveWidget({super.key}) : super();
 
   @override
   Widget build(BuildContext context) {
-    BasicSwerveModel model = cast(context.watch<NTWidgetModel>());
+    EncoderdSwerveModel model = cast(context.watch<NTWidgetModel>());
 
     return ListenableBuilder(
       listenable: Listenable.merge(model.subscriptions),
       builder: (context, child) {
         double frontLeftAngle =
             tryCast(model.frontLeftAngleSubscription.value) ?? 0.0;
-        double frontLeftVelocity =
-            tryCast(model.frontLeftVelocitySubscription.value) ?? 0.0;
 
         double frontRightAngle =
             tryCast(model.frontRightAngleSubscription.value) ?? 0.0;
-        double frontRightVelocity =
-            tryCast(model.frontRightVelocitySubscription.value) ?? 0.0;
 
         double backLeftAngle =
             tryCast(model.backLeftAngleSubscription.value) ?? 0.0;
-        double backLeftVelocity =
-            tryCast(model.backLeftVelocitySubscription.value) ?? 0.0;
 
         double backRightAngle =
             tryCast(model.backRightAngleSubscription.value) ?? 0.0;
-        double backRightVelocity =
-            tryCast(model.backRightVelocitySubscription.value) ?? 0.0;
+
+        double encoderdFrontLeftAngle =
+            tryCast(model.frontLeftEncoderSubscription.value) ?? 0.0;
+
+        double encoderdFrontRightAngle =
+            tryCast(model.frontRightEncoderSubscription.value) ?? 0.0;
+
+        double encoderdBackLeftAngle =
+            tryCast(model.backLeftEncoderSubscription.value) ?? 0.0;
+
+        double encoderdBackRightAngle =
+            tryCast(model.backRightEncoderSubscription.value) ?? 0.0;
 
         double robotAngle = tryCast(model.robotAngleSubscription.value) ?? 0.0;
 
@@ -245,12 +249,21 @@ class SwerveDriveWidget extends NTWidget {
           backLeftAngle = radians(backLeftAngle);
           backRightAngle = radians(backRightAngle);
 
+          encoderdFrontLeftAngle = radians(encoderdFrontLeftAngle);
+          encoderdFrontRightAngle = radians(encoderdFrontRightAngle);
+          encoderdBackLeftAngle = radians(encoderdBackLeftAngle);
+          encoderdBackRightAngle = radians(encoderdBackRightAngle);
+
           robotAngle = radians(robotAngle);
         } else if (model.rotationUnit == 'Rotations') {
           frontLeftAngle *= 2 * pi;
           frontRightAngle *= 2 * pi;
           backLeftAngle *= 2 * pi;
           backRightAngle *= 2 * pi;
+          encoderdFrontLeftAngle *= 2 * pi;
+          encoderdFrontRightAngle *= 2 * pi;
+          encoderdBackLeftAngle *= 2 * pi;
+          encoderdBackRightAngle *= 2 * pi;
 
           robotAngle *= 2 * pi;
         }
@@ -267,13 +280,13 @@ class SwerveDriveWidget extends NTWidget {
                 child: CustomPaint(
                   painter: SwerveDrivePainter(
                     frontLeftAngle: frontLeftAngle,
-                    frontLeftVelocity: frontLeftVelocity,
+                    frontLeftEncoder: encoderdFrontLeftAngle,
                     frontRightAngle: frontRightAngle,
-                    frontRightVelocity: frontRightVelocity,
+                    frontRightEncoder: encoderdFrontRightAngle,
                     backLeftAngle: backLeftAngle,
-                    backLeftVelocity: backLeftVelocity,
+                    backLeftEncoder: encoderdBackLeftAngle,
                     backRightAngle: backRightAngle,
-                    backRightVelocity: backRightVelocity,
+                    backRightEncoder: encoderdBackRightAngle,
                   ),
                 ),
               ),
@@ -287,26 +300,26 @@ class SwerveDriveWidget extends NTWidget {
 
 class SwerveDrivePainter extends CustomPainter {
   final double frontLeftAngle;
-  final double frontLeftVelocity;
+  final double frontLeftEncoder;
 
   final double frontRightAngle;
-  final double frontRightVelocity;
+  final double frontRightEncoder;
 
   final double backLeftAngle;
-  final double backLeftVelocity;
+  final double backLeftEncoder;
 
   final double backRightAngle;
-  final double backRightVelocity;
+  final double backRightEncoder;
 
   const SwerveDrivePainter({
     required this.frontLeftAngle,
-    required this.frontLeftVelocity,
+    required this.frontLeftEncoder,
     required this.frontRightAngle,
-    required this.frontRightVelocity,
+    required this.frontRightEncoder,
     required this.backLeftAngle,
-    required this.backLeftVelocity,
+    required this.backLeftEncoder,
     required this.backRightAngle,
-    required this.backRightVelocity,
+    required this.backRightEncoder,
   });
 
   @override
@@ -418,19 +431,8 @@ class SwerveDrivePainter extends CustomPainter {
 
   void drawMotionArrows(Canvas canvas, Size size, Offset offset) {
     final double circleRadius = min(size.width, size.height) / 8;
-    const double arrowAngle = 40 * pi / 180;
 
     final double scaleFactor = size.width / 128.95 / 0.9;
-
-    final double pixelsPerMPS = 7.0 / 1.0 * scaleFactor;
-
-    final double minArrowBase = 6.5 * scaleFactor;
-    final double maxArrowBase = 16.0 * scaleFactor;
-
-    Paint arrowPaint = Paint()
-      ..strokeWidth = 2 * scaleFactor
-      ..color = Colors.red
-      ..style = PaintingStyle.stroke;
 
     Paint anglePaint = Paint()
       ..strokeWidth = 3.5 * scaleFactor
@@ -453,54 +455,6 @@ class SwerveDrivePainter extends CustomPainter {
       anglePaint,
     );
 
-    // Front left vector arrow
-    if (frontLeftVelocity.abs() >= 0.05) {
-      double frontLeftAngle = this.frontLeftAngle;
-
-      frontLeftAngle += pi / 2;
-      frontLeftAngle *= -1;
-
-      if (frontLeftVelocity < 0) {
-        frontLeftAngle -= pi;
-      }
-
-      double frontLeftArrowLength = frontLeftVelocity.abs() * pixelsPerMPS;
-      double frontLeftArrowBase = (frontLeftArrowLength / 3.0).clamp(
-        minArrowBase,
-        maxArrowBase,
-      );
-
-      canvas.drawLine(
-        Offset(circleRadius, circleRadius) + offset,
-        Offset(
-              frontLeftArrowLength * cos(frontLeftAngle),
-              frontLeftArrowLength * sin(frontLeftAngle),
-            ) +
-            Offset(circleRadius, circleRadius) +
-            offset,
-        arrowPaint,
-      );
-
-      drawArrowHead(
-        canvas,
-        Offset(circleRadius, circleRadius) / 2 + offset,
-        frontLeftArrowLength * cos(frontLeftAngle) + circleRadius / 2,
-        frontLeftArrowLength * sin(frontLeftAngle) + circleRadius / 2,
-        frontLeftAngle,
-        arrowAngle,
-        frontLeftArrowBase,
-        arrowPaint,
-      );
-    } else {
-      // Draw an X
-      drawX(
-        canvas,
-        Offset(circleRadius, circleRadius) + offset,
-        circleRadius,
-        arrowPaint,
-      );
-    }
-
     // Front right angle indicator thing
     Rect frontRightWheel = Rect.fromCenter(
       center: Offset(size.width - circleRadius, circleRadius) + offset,
@@ -515,55 +469,6 @@ class SwerveDrivePainter extends CustomPainter {
       false,
       anglePaint,
     );
-
-    // Front right vector arrow
-    if (frontRightVelocity.abs() >= 0.05) {
-      double frontRightAngle = this.frontRightAngle;
-
-      frontRightAngle += pi / 2;
-      frontRightAngle *= -1;
-
-      if (frontRightVelocity < 0) {
-        frontRightAngle -= pi;
-      }
-
-      double frontRightArrowLength = frontRightVelocity.abs() * pixelsPerMPS;
-      double frontRightArrowBase = (frontRightArrowLength / 3.0).clamp(
-        minArrowBase,
-        maxArrowBase,
-      );
-
-      canvas.drawLine(
-        Offset(size.width - circleRadius, circleRadius) + offset,
-        Offset(
-              frontRightArrowLength * cos(frontRightAngle),
-              frontRightArrowLength * sin(frontRightAngle),
-            ) +
-            Offset(size.width - circleRadius, circleRadius) +
-            offset,
-        arrowPaint,
-      );
-
-      drawArrowHead(
-        canvas,
-        Offset(size.width - circleRadius / 2, circleRadius / 2) + offset,
-        frontRightArrowLength * cos(frontRightAngle) - circleRadius / 2,
-        frontRightArrowLength * sin(frontRightAngle) + circleRadius / 2,
-        frontRightAngle,
-        arrowAngle,
-        frontRightArrowBase,
-        arrowPaint,
-      );
-    } else {
-      // Draw an X
-      drawX(
-        canvas,
-        Offset(size.width - circleRadius, circleRadius) + offset,
-        circleRadius,
-        arrowPaint,
-      );
-    }
-
     // Back left angle indicator thing
     Rect backLeftWheel = Rect.fromCenter(
       center: Offset(circleRadius, size.height - circleRadius) + offset,
@@ -578,54 +483,6 @@ class SwerveDrivePainter extends CustomPainter {
       false,
       anglePaint,
     );
-
-    // Back left vector arrow
-    if (backLeftVelocity.abs() >= 0.05) {
-      double backLeftAngle = this.backLeftAngle;
-
-      backLeftAngle += pi / 2;
-      backLeftAngle *= -1;
-
-      if (backLeftVelocity < 0) {
-        backLeftAngle -= pi;
-      }
-
-      double backLeftArrowLength = backLeftVelocity.abs() * pixelsPerMPS;
-      double backLeftArrowBase = (backLeftArrowLength / 3.0).clamp(
-        minArrowBase,
-        maxArrowBase,
-      );
-
-      canvas.drawLine(
-        Offset(circleRadius, size.height - circleRadius) + offset,
-        Offset(
-              backLeftArrowLength * cos(backLeftAngle),
-              backLeftArrowLength * sin(backLeftAngle),
-            ) +
-            Offset(circleRadius, size.height - circleRadius) +
-            offset,
-        arrowPaint,
-      );
-
-      drawArrowHead(
-        canvas,
-        Offset(circleRadius / 2, size.height - circleRadius / 2) + offset,
-        backLeftArrowLength * cos(backLeftAngle) + circleRadius / 2,
-        backLeftArrowLength * sin(backLeftAngle) - circleRadius / 2,
-        backLeftAngle,
-        arrowAngle,
-        backLeftArrowBase,
-        arrowPaint,
-      );
-    } else {
-      // Draw an X
-      drawX(
-        canvas,
-        Offset(circleRadius, size.height - circleRadius) + offset,
-        circleRadius,
-        arrowPaint,
-      );
-    }
 
     // Back right angle indicator thing
     Rect backRightWheel = Rect.fromCenter(
@@ -643,93 +500,6 @@ class SwerveDrivePainter extends CustomPainter {
       false,
       anglePaint,
     );
-
-    // Back right vector arrow
-    if (backRightVelocity.abs() >= 0.05) {
-      double backRightAngle = this.backRightAngle;
-
-      backRightAngle += pi / 2;
-      backRightAngle *= -1;
-
-      if (backRightVelocity < 0) {
-        backRightAngle -= pi;
-      }
-
-      double backRightArrowLength = backRightVelocity.abs() * pixelsPerMPS;
-      double backRightArrowBase = (backRightArrowLength / 3.0).clamp(
-        minArrowBase,
-        maxArrowBase,
-      );
-
-      canvas.drawLine(
-        Offset(size.width - circleRadius, size.height - circleRadius) + offset,
-        Offset(
-              backRightArrowLength * cos(backRightAngle),
-              backRightArrowLength * sin(backRightAngle),
-            ) +
-            Offset(size.width - circleRadius, size.height - circleRadius) +
-            offset,
-        arrowPaint,
-      );
-
-      drawArrowHead(
-        canvas,
-        Offset(size.width - circleRadius / 2, size.height - circleRadius / 2) +
-            offset,
-        backRightArrowLength * cos(backRightAngle) - circleRadius / 2,
-        backRightArrowLength * sin(backRightAngle) - circleRadius / 2,
-        backRightAngle,
-        arrowAngle,
-        backRightArrowBase,
-        arrowPaint,
-      );
-    } else {
-      // Draw an X
-      drawX(
-        canvas,
-        Offset(size.width - circleRadius, size.height - circleRadius) + offset,
-        circleRadius,
-        arrowPaint,
-      );
-    }
-  }
-
-  void drawX(Canvas canvas, Offset offset, double circleRadius, Paint xPaint) {
-    canvas.drawLine(
-      Offset(circleRadius / 2, circleRadius / 2) * 0.75 + offset,
-      -Offset(circleRadius / 2, circleRadius / 2) * 0.75 + offset,
-      xPaint,
-    );
-
-    canvas.drawLine(
-      -Offset(-circleRadius / 2, circleRadius / 2) * 0.75 + offset,
-      Offset(-circleRadius / 2, circleRadius / 2) * 0.75 + offset,
-      xPaint,
-    );
-  }
-
-  void drawArrowHead(
-    Canvas canvas,
-    Offset center,
-    double tipX,
-    double tipY,
-    double arrowRotation,
-    double arrowAngle,
-    double base,
-    Paint arrowPaint,
-  ) {
-    Path arrowPath = Path()
-      ..moveTo(
-        center.dx + tipX - base * cos(arrowRotation - arrowAngle),
-        center.dy + tipY - base * sin(arrowRotation - arrowAngle),
-      )
-      ..lineTo(center.dx + tipX, center.dy + tipY)
-      ..lineTo(
-        center.dx + tipX - base * cos(arrowRotation + arrowAngle),
-        center.dy + tipY - base * sin(arrowRotation + arrowAngle),
-      );
-
-    canvas.drawPath(arrowPath, arrowPaint);
   }
 
   void drawRobotDirectionArrow(Canvas canvas, Size size, Offset offset) {
