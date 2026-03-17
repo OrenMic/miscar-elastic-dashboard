@@ -10,23 +10,24 @@ class PowerDistributionModel extends MultiTopicNTWidgetModel {
   @override
   String type = PowerDistribution.widgetType;
 
-  static const int numberOfChannels = 23;
+  static const int numberOfChannels = 24;
 
   final List<String> channelTopics = [];
 
   String get voltageTopic => '$topic/Voltage';
   String get currentTopic => '$topic/TotalCurrent';
+  String get channelCurrentsTopic => '$topic/ChannelCurrent';
 
   late NT4Subscription voltageSubscription;
   late NT4Subscription currentSubscription;
 
-  final List<NT4Subscription> channelSubscriptions = [];
+  late NT4Subscription channelsSubscription;
 
   @override
   List<NT4Subscription> get subscriptions => [
     voltageSubscription,
     currentSubscription,
-    ...channelSubscriptions,
+    channelsSubscription,
   ];
 
   PowerDistributionModel({
@@ -46,17 +47,10 @@ class PowerDistributionModel extends MultiTopicNTWidgetModel {
   void initializeSubscriptions() {
     voltageSubscription = ntConnection.subscribe(voltageTopic, super.period);
     currentSubscription = ntConnection.subscribe(currentTopic, super.period);
-
-    channelTopics.clear();
-    channelSubscriptions.clear();
-
-    for (int channel = 0; channel <= numberOfChannels; channel++) {
-      channelTopics.add('$topic/Chan$channel');
-    }
-
-    for (String topic in channelTopics) {
-      channelSubscriptions.add(ntConnection.subscribe(topic, super.period));
-    }
+    channelsSubscription = ntConnection.subscribe(
+      channelCurrentsTopic,
+      super.period,
+    );
   }
 }
 
@@ -64,6 +58,13 @@ class PowerDistribution extends NTWidget {
   static const String widgetType = 'PowerDistribution';
 
   const PowerDistribution({super.key}) : super();
+
+  double getChannelCurrant(Object? value, int channel) {
+    List<Object?> channelsRaw = value?.tryCast<List<Object?>>() ?? [];
+
+    double amps = channelsRaw.whereType<double>().toList()[channel];
+    return amps;
+  }
 
   Widget _getChannelsColumn(
     PowerDistributionModel model,
@@ -79,10 +80,9 @@ class PowerDistribution extends NTWidget {
           mainAxisSize: MainAxisSize.max,
           children: [
             ValueListenableBuilder(
-              valueListenable: model.channelSubscriptions[channel],
+              valueListenable: model.channelsSubscription,
               builder: (context, value, child) {
-                double current = tryCast(value) ?? 0.0;
-
+                double current = getChannelCurrant(value, channel);
                 return Container(
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surface,
@@ -132,9 +132,9 @@ class PowerDistribution extends NTWidget {
             Text('Ch. $channel'),
             const SizedBox(width: 10),
             ValueListenableBuilder(
-              valueListenable: model.channelSubscriptions[channel],
+              valueListenable: model.channelsSubscription,
               builder: (context, value, child) {
-                double current = tryCast(value) ?? 0.0;
+                double current = getChannelCurrant(value, channel);
                 return Container(
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surface,
